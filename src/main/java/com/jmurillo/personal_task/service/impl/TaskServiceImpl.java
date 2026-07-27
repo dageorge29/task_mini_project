@@ -39,18 +39,35 @@ public class TaskServiceImpl implements TaskService {
         Task gotIt = taskRepository.findById(id).orElse(null);
 
         if (gotIt != null){
-            gotIt.setDescription(task.getDescription());
-            gotIt.setId(task.getId());
-            gotIt.setPriority(task.getPriority());
-            gotIt.setStatus(task.getStatus());
-            gotIt.setTitle(task.getTitle());
-            return task;
+
+            if (task.getTitle() != null) {
+                gotIt.setTitle(task.getTitle());
+            }
+            if (task.getDescription() != null){
+                gotIt.setDescription(task.getDescription());
+            }
+            if (task.getPriority() != null){
+                gotIt.setPriority(task.getPriority());
+            }
+            if (task.getStatus() != null){
+                gotIt.setStatus(task.getStatus());
+            }
+            return taskRepository.save(gotIt);
         }
         return null;
     }
 
     @Override
-    public void deleteTask(Long id) {
-        taskRepository.deleteById(id);
+    public Boolean deleteTask(Long id) {
+        if (taskRepository.existsById(id)){
+            taskRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void deleteAll() {
+        taskRepository.deleteAll();
     }
 }

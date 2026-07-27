@@ -8,28 +8,25 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "task")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class Task {
 
-    //Entity: Task (id, title, description, isCompleted, dueDate, priority)
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //autoincrementably id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description", nullable = true)
+    @Column(name = "description", nullable = false)
     private String description;
 
     @Column(name = "completed", nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Column(name = "priority", nullable = true)
+    @Column(name = "priority", nullable = false)
     @Enumerated(EnumType.STRING)
     private Priority priority;
 
