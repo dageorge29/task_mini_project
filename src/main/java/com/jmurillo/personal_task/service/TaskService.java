@@ -1,5 +1,7 @@
 package com.jmurillo.personal_task.service;
 
+import com.jmurillo.personal_task.entity.Priority;
+import com.jmurillo.personal_task.entity.Status;
 import com.jmurillo.personal_task.entity.Task;
 
 import java.util.List;
@@ -15,11 +17,15 @@ public interface TaskService {
 
     //u
     Task updateTask(Long id, Task task);
+    Task updateStatus(Long id, Status newStatus);
+    Task updatePriority(Long id, Priority newPriority);
 
     //d
-    Boolean deleteTask(Long id);
+    String deleteTaskById(Long id);
 
     void deleteAll();
+
+
 
 
 

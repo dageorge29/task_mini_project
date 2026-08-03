@@ -1,6 +1,8 @@
 package com.jmurillo.personal_task.controller;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.jmurillo.personal_task.entity.Priority;
+import com.jmurillo.personal_task.entity.Status;
 import com.jmurillo.personal_task.entity.Task;
 import com.jmurillo.personal_task.service.impl.TaskServiceImpl;
 import org.springframework.web.bind.annotation.*;
@@ -21,11 +23,7 @@ public class TaskController {
     //retrieve costumer task by id if exists
     @GetMapping("/task/{id}")
     public Task getById(@PathVariable(required = false) Long id){
-        //ckeck existance of costumer id
-        if (taskService.readTaskByID(id) != null){
-            return taskService.readTaskByID(id);
-        }
-        return null;
+        return taskService.readTaskByID(id);
     }
 
     //retrieve all costumers
@@ -41,18 +39,29 @@ public class TaskController {
     }
 
     //updates the costumer (all or majority) tasks datas
-    @PutMapping("/taskupdate/{id}")
-    public void updateCostumerTaskById(@PathVariable(required = true) Long id, @RequestBody(required = true) Task task){
-        taskService.updateTask(id, task);
+    @PutMapping("/update/{id}")
+    public Task updateCostumerTaskById(@PathVariable(required = true) Long id, @RequestBody(required = true) Task task){
+        return taskService.updateTask(id, task);
+    }
+
+    //TODO: no funciona -> revisar params
+    //updates the priority
+    @PutMapping("/priority/{id}")
+    public Task updateCostumerPriority(@PathVariable Long id, @RequestBody Priority priority){
+        return taskService.updatePriority(id, priority);
+    }
+
+    //TODO: no funciona -> revisar param
+    //updates the status
+    @PutMapping("/status/{id}")
+    public Task updateCostumerStatus(@PathVariable Long id, @RequestBody Status status){
+        return taskService.updateStatus(id, status);
     }
 
     //delete specific costumer task by id
     @DeleteMapping("/taskdelete/{id}")
-    public String deleteTaskById(@PathVariable(required = true) Long id){
-        if (taskService.deleteTask(id)){
-            return "id: " + id + " eliminado";
-        }
-        return "id: " + id + " inexistente";
+    public String deleteTaskById(@PathVariable Long id){
+        return taskService.deleteTaskById(id);
     }
 
     //delete all the costumers tasks

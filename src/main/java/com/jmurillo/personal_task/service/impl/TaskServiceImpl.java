@@ -1,8 +1,11 @@
 package com.jmurillo.personal_task.service.impl;
 
+import com.jmurillo.personal_task.entity.Priority;
+import com.jmurillo.personal_task.entity.Status;
 import com.jmurillo.personal_task.entity.Task;
 import com.jmurillo.personal_task.repository.TaskRepository;
 import com.jmurillo.personal_task.service.TaskService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,7 +39,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task updateTask(Long id, Task task) {
-        Task gotIt = taskRepository.findById(id).orElse(null);
+        Task gotIt = taskRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Costumer id doesnt match with the provided"));
 
         if (gotIt != null){
 
@@ -54,16 +58,41 @@ public class TaskServiceImpl implements TaskService {
             }
             return taskRepository.save(gotIt);
         }
-        return null;
+        return gotIt;
     }
 
     @Override
-    public Boolean deleteTask(Long id) {
+    public Task updateStatus(Long id, Status newStatus) {
+        Task newStatusUpdate = taskRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Costumer id doesnt match with the provided" + id));
+
+        if (newStatusUpdate != null){
+            newStatusUpdate.setStatus(newStatusUpdate.getStatus());
+            return taskRepository.save(newStatusUpdate);
+        }
+        return newStatusUpdate;
+    }
+
+    @Override
+    public Task
+    updatePriority(Long id, Priority newPriority) {
+        Task newPriorityUpdate = taskRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Costumer id doesnt match with the provided " + id));
+
+        if (newPriorityUpdate != null){
+            newPriorityUpdate.setPriority(newPriorityUpdate.getPriority());
+            return taskRepository.save(newPriorityUpdate);
+        }
+        return newPriorityUpdate;
+    }
+
+    @Override
+    public String deleteTaskById(Long id) {
         if (taskRepository.existsById(id)){
             taskRepository.deleteById(id);
-            return true;
+            return "id " + id + " deleted" ;
         }
-        return false;
+        return "id " + id + " doesnt exist, pls try again ";
     }
 
     @Override
