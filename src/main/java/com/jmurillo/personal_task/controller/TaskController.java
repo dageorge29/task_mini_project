@@ -1,73 +1,71 @@
 package com.jmurillo.personal_task.controller;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.jmurillo.personal_task.dtos.request.TaskRequestDTO;
+import com.jmurillo.personal_task.dtos.response.TaskResponseDTO;
 import com.jmurillo.personal_task.entity.Priority;
 import com.jmurillo.personal_task.entity.Status;
 import com.jmurillo.personal_task.entity.Task;
 import com.jmurillo.personal_task.service.impl.TaskServiceImpl;
+import jakarta.validation.Valid;
+import org.apache.coyote.Response;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
 public class TaskController {
 
-    private final TaskServiceImpl taskService;
+    private final TaskServiceImpl service;
 
     public TaskController(TaskServiceImpl taskService) {
-        this.taskService = taskService;
+        this.service = taskService;
     }
+
 
     //retrieve costumer task by id if exists
     @GetMapping("/task/{id}")
-    public Task getById(@PathVariable(required = false) Long id){
-        return taskService.readTaskByID(id);
+    public ResponseEntity<TaskResponseDTO> getById(@Valid @PathVariable(required = false) Long id){
+        return ResponseEntity.ok(service.readTaskByID(id));
     }
 
     //retrieve all costumers
     @GetMapping("/task")
-    public List<Task> getAllCostumers(){
-        return taskService.readAll();
+    public ResponseEntity<List<TaskResponseDTO>> getAllCostumers(){
+        return ResponseEntity.ok(service.readAll());
     }
 
     //create new Task
     @PostMapping("/task")
-    public Task createTask(@RequestBody(required = false) Task task){
-        return taskService.createTask(task);
+    public ResponseEntity<TaskResponseDTO> createTask(@Valid @RequestBody(required = false) TaskRequestDTO task){
+        TaskResponseDTO t = service.createTask(task);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(t);
     }
 
     //updates the costumer (all or majority) tasks datas
     @PutMapping("/update/{id}")
-    public Task updateCostumerTaskById(@PathVariable(required = true) Long id, @RequestBody(required = true) Task task){
-        return taskService.updateTask(id, task);
-    }
-
-    //TODO: no funciona -> revisar params
-    //updates the priority
-    @PutMapping("/priority/{id}")
-    public Task updateCostumerPriority(@PathVariable Long id, @RequestBody Priority priority){
-        return taskService.updatePriority(id, priority);
-    }
-
-    //TODO: no funciona -> revisar param
-    //updates the status
-    @PutMapping("/status/{id}")
-    public Task updateCostumerStatus(@PathVariable Long id, @RequestBody Status status){
-        return taskService.updateStatus(id, status);
+    public ResponseEntity<TaskResponseDTO> updateCostumerTaskById(@Valid @PathVariable(required = true) Long id, @RequestBody(required = true) TaskRequestDTO task){
+        TaskResponseDTO t = service.updateTask(id, task);
+        return ResponseEntity.ok(t);
     }
 
     //delete specific costumer task by id
     @DeleteMapping("/taskdelete/{id}")
-    public String deleteTaskById(@PathVariable Long id){
-        return taskService.deleteTaskById(id);
+    public ResponseEntity<String> deleteTaskById(@Valid @PathVariable Long id){
+        return ResponseEntity.ok(service.deleteTaskById(id));
     }
 
     //delete all the costumers tasks
     @DeleteMapping("/deleteall")
     public void deleteAll(){
-        taskService.deleteAll();
+        service.deleteAll();
     }
 
 

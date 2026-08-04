@@ -1,8 +1,11 @@
 package com.jmurillo.personal_task.service.impl;
 
+import com.jmurillo.personal_task.dtos.request.TaskRequestDTO;
+import com.jmurillo.personal_task.dtos.response.TaskResponseDTO;
 import com.jmurillo.personal_task.entity.Priority;
 import com.jmurillo.personal_task.entity.Status;
 import com.jmurillo.personal_task.entity.Task;
+import com.jmurillo.personal_task.mapper.TaskMapper;
 import com.jmurillo.personal_task.repository.TaskRepository;
 import com.jmurillo.personal_task.service.TaskService;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,76 +17,62 @@ import java.util.List;
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
+    private final TaskMapper mapper;
 
     //Task repository DI
-    public TaskServiceImpl(TaskRepository taskRepository) {
+    public TaskServiceImpl(TaskRepository taskRepository, TaskMapper mapper) {
         this.taskRepository = taskRepository;
+        this.mapper = mapper;
     }
 
     //Create a new task in db fields
     @Override
-    public Task createTask(Task task) {
-        return taskRepository.save(task);
+    public TaskResponseDTO createTask(TaskRequestDTO dto) {
+        Task t = mapper.toEntity(dto);
+        return mapper.toDTO(taskRepository.save(t));
     }
 
     //find by costumer task by id in the db
     @Override
-    public Task readTaskByID(Long id) {
-        return taskRepository.findById(id).orElse(null);
+    public TaskResponseDTO readTaskByID(Long id) {
+        return taskRepository.findById(id)
+                .map(mapper::toDTO)
+                .orElseThrow(() -> new EntityNotFoundException("The entity doenst exists"));
     }
 
+    //retrieves all costumers
     @Override
-    public List<Task> readAll() {
-        return taskRepository.findAll();
+    public List<TaskResponseDTO> readAll() {
+        return taskRepository.findAll().stream()
+                .map(mapper::toDTO)
+                .toList();
     }
 
+    //updates all costumer data by id
     @Override
-    public Task updateTask(Long id, Task task) {
+    public TaskResponseDTO updateTask(Long id, TaskRequestDTO data) {
         Task gotIt = taskRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Costumer id doesnt match with the provided"));
 
         if (gotIt != null){
 
-            if (task.getTitle() != null) {
-                gotIt.setTitle(task.getTitle());
+            if (data.title() != null) {
+                gotIt.setTitle(data.title());
             }
-            if (task.getDescription() != null){
-                gotIt.setDescription(task.getDescription());
+            if (data.description() != null){
+                gotIt.setDescription(data.description());
             }
-            if (task.getPriority() != null){
-                gotIt.setPriority(task.getPriority());
+            if (data.priority() != null){
+                gotIt.setPriority(data.priority());
             }
-            if (task.getStatus() != null){
-                gotIt.setStatus(task.getStatus());
+            if (data.status() != null){
+                gotIt.setStatus(data.status());
             }
-            return taskRepository.save(gotIt);
+            Task saveIt = taskRepository.save(gotIt);
+            return mapper.toDTO(saveIt);
         }
-        return gotIt;
-    }
-
-    @Override
-    public Task updateStatus(Long id, Status newStatus) {
-        Task newStatusUpdate = taskRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Costumer id doesnt match with the provided" + id));
-
-        if (newStatusUpdate != null){
-            newStatusUpdate.setStatus(newStatusUpdate.getStatus());
-            return taskRepository.save(newStatusUpdate);
-        }
-        return newStatusUpdate;
-    }
-
-    @Override
-    public Task
-    updatePriority(Long id, Priority newPriority) {
-        Task newPriorityUpdate = taskRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Costumer id doesnt match with the provided " + id));
-
-        if (newPriorityUpdate != null){
-            newPriorityUpdate.setPriority(newPriorityUpdate.getPriority());
-            return taskRepository.save(newPriorityUpdate);
-        }
-        return newPriorityUpdate;
+        Task saveIt = taskRepository.save(gotIt);
+        return mapper.toDTO(saveIt);
     }
 
     @Override
