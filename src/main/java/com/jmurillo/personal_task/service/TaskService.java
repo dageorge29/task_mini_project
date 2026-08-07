@@ -7,6 +7,7 @@ import com.jmurillo.personal_task.entity.Status;
 import com.jmurillo.personal_task.entity.Task;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TaskService {
 
@@ -14,14 +15,14 @@ public interface TaskService {
     TaskResponseDTO createTask(TaskRequestDTO task);
 
     //r
-    TaskResponseDTO readTaskByID(Long id);
+    Optional<TaskResponseDTO> readTaskByID(Long id);
     List<TaskResponseDTO> readAll();
 
     //u
     TaskResponseDTO updateTask(Long id, TaskRequestDTO task);
 
     //d
-    String deleteTaskById(Long id);
+    Boolean deleteTaskById(Long id);
 
     void deleteAll();
 

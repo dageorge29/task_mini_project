@@ -1,6 +1,7 @@
 package com.jmurillo.personal_task.repository;
 
 
+import com.jmurillo.personal_task.dtos.response.TaskResponseDTO;
 import com.jmurillo.personal_task.entity.Priority;
 import com.jmurillo.personal_task.entity.Status;
 import com.jmurillo.personal_task.entity.Task;
@@ -14,7 +15,6 @@ import java.util.Optional;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
-    Optional<Task> findById(Long id);
 
 
 

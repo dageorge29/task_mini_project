@@ -12,16 +12,17 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TaskServiceImpl implements TaskService {
 
-    private final TaskRepository taskRepository;
+    private final TaskRepository repository;
     private final TaskMapper mapper;
 
     //Task repository DI
-    public TaskServiceImpl(TaskRepository taskRepository, TaskMapper mapper) {
-        this.taskRepository = taskRepository;
+    public TaskServiceImpl(TaskRepository repository, TaskMapper mapper) {
+        this.repository = repository;
         this.mapper = mapper;
     }
 
@@ -29,21 +30,22 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskResponseDTO createTask(TaskRequestDTO dto) {
         Task t = mapper.toEntity(dto);
-        return mapper.toDTO(taskRepository.save(t));
+        return mapper.toDTO(repository.save(t));
     }
 
     //find by costumer task by id in the db
     @Override
-    public TaskResponseDTO readTaskByID(Long id) {
-        return taskRepository.findById(id)
+    public Optional<TaskResponseDTO> readTaskByID(Long id) {
+        return repository.findById(id)
                 .map(mapper::toDTO)
-                .orElseThrow(() -> new EntityNotFoundException("The entity doenst exists"));
+                .stream()
+                .findAny();
     }
 
     //retrieves all costumers
     @Override
     public List<TaskResponseDTO> readAll() {
-        return taskRepository.findAll().stream()
+        return repository.findAll().stream()
                 .map(mapper::toDTO)
                 .toList();
     }
@@ -51,7 +53,7 @@ public class TaskServiceImpl implements TaskService {
     //updates all costumer data by id
     @Override
     public TaskResponseDTO updateTask(Long id, TaskRequestDTO data) {
-        Task gotIt = taskRepository.findById(id)
+        Task gotIt = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Costumer id doesnt match with the provided"));
 
         if (gotIt != null){
@@ -68,24 +70,24 @@ public class TaskServiceImpl implements TaskService {
             if (data.status() != null){
                 gotIt.setStatus(data.status());
             }
-            Task saveIt = taskRepository.save(gotIt);
+            Task saveIt = repository.save(gotIt);
             return mapper.toDTO(saveIt);
         }
-        Task saveIt = taskRepository.save(gotIt);
+        Task saveIt = repository.save(gotIt);
         return mapper.toDTO(saveIt);
     }
 
     @Override
-    public String deleteTaskById(Long id) {
-        if (taskRepository.existsById(id)){
-            taskRepository.deleteById(id);
-            return "id " + id + " deleted" ;
+    public Boolean deleteTaskById(Long id) {
+        if (repository.existsById(id)){
+            repository.deleteById(id);
+            return true;
         }
-        return "id " + id + " doesnt exist, pls try again ";
+        return false;
     }
 
     @Override
     public void deleteAll() {
-        taskRepository.deleteAll();
+        repository.deleteAll();
     }
 }
