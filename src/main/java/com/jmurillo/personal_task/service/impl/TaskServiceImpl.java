@@ -9,37 +9,35 @@ import com.jmurillo.personal_task.mapper.TaskMapper;
 import com.jmurillo.personal_task.repository.TaskRepository;
 import com.jmurillo.personal_task.service.TaskService;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository repository;
     private final TaskMapper mapper;
 
-    //Task repository DI
-    public TaskServiceImpl(TaskRepository repository, TaskMapper mapper) {
-        this.repository = repository;
-        this.mapper = mapper;
-    }
-
     //Create a new task in db fields
     @Override
     public TaskResponseDTO createTask(TaskRequestDTO dto) {
         Task t = mapper.toEntity(dto);
+
         return mapper.toDTO(repository.save(t));
     }
 
     //find by costumer task by id in the db
     @Override
-    public Optional<TaskResponseDTO> readTaskByID(Long id) {
+    public TaskResponseDTO readTaskByID(Long id) {
         return repository.findById(id)
                 .map(mapper::toDTO)
                 .stream()
-                .findAny();
+                .findAny()
+                .orElseThrow(() -> new EntityNotFoundException("The customer " + id + " does not exist"));
     }
 
     //retrieves all costumers
@@ -54,7 +52,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskResponseDTO updateTask(Long id, TaskRequestDTO data) {
         Task gotIt = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Costumer id doesnt match with the provided"));
+                .orElseThrow(() -> new EntityNotFoundException("The customer " + id + " does not exist"));
 
         if (gotIt != null){
 
@@ -78,12 +76,13 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Boolean deleteTaskById(Long id) {
-        if (repository.existsById(id)){
-            repository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void deleteTaskById(Long id) {
+        Task task =  repository.findById(id)
+                .stream()
+                .findAny()
+                .orElseThrow(() -> new EntityNotFoundException("The customer " + id + " does not exist"));
+
+        repository.delete(task);
     }
 
     @Override

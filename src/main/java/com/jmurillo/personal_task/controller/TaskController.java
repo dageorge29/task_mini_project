@@ -9,6 +9,7 @@ import com.jmurillo.personal_task.entity.Status;
 import com.jmurillo.personal_task.entity.Task;
 import com.jmurillo.personal_task.service.impl.TaskServiceImpl;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,48 +23,27 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
+@AllArgsConstructor
 public class TaskController {
 
     private final TaskServiceImpl service;
 
-    public TaskController(TaskServiceImpl taskService) {
-        this.service = taskService;
-    }
-
-
     //retrieve costumer task by id if exists
     @GetMapping("/task/{id}")
-    public ResponseEntity<Optional<TaskResponseDTO>> getById(@PathVariable(required = false) Long id){
-        Optional<TaskResponseDTO> response = service.readTaskByID(id);
-
-        if (response.isPresent()){
-            return ResponseEntity.ok(response);
-        }
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .build();
+    public TaskResponseDTO getById(@PathVariable(required = false) Long id){
+        return service.readTaskByID(id);
     }
 
     //retrieve all costumers
     @GetMapping("/task")
-    public ResponseEntity<List<TaskResponseDTO>> getAllCostumers(){
-        return ResponseEntity.ok(service.readAll());
+    public List<TaskResponseDTO> getAllCostumers(){
+        return service.readAll();
     }
 
     //create new Task
     @PostMapping("/task")
-    public ResponseEntity<TaskResponseDTO> createTask(@Valid @RequestBody(required = false) TaskRequestDTO task){
-        TaskResponseDTO response = service.createTask(task);
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(response.id())
-                .toUri();
-
-        return ResponseEntity
-                .created(location)
-                .body(response);
+    public TaskResponseDTO createTask(@Valid @RequestBody(required = false) TaskRequestDTO task){
+        return service.createTask(task);
     }
 
     //updates the costumer (all or majority) tasks datas
@@ -76,12 +56,8 @@ public class TaskController {
     //delete specific costumer task by id
     @DeleteMapping("/taskdelete/{id}")
     public ResponseEntity<Void> deleteTaskById(@Valid @PathVariable Long id){
-        Boolean deleted = service.deleteTaskById(id);
-
-        if (deleted){
-            return ResponseEntity.status(HttpStatus.OK).build();
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        service.deleteTaskById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     //delete all the costumers tasks

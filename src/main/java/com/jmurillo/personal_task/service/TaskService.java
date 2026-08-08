@@ -15,14 +15,14 @@ public interface TaskService {
     TaskResponseDTO createTask(TaskRequestDTO task);
 
     //r
-    Optional<TaskResponseDTO> readTaskByID(Long id);
+    TaskResponseDTO readTaskByID(Long id);
     List<TaskResponseDTO> readAll();
 
     //u
     TaskResponseDTO updateTask(Long id, TaskRequestDTO task);
 
     //d
-    Boolean deleteTaskById(Long id);
+    void deleteTaskById(Long id);
 
     void deleteAll();
 
