@@ -1,25 +1,15 @@
 package com.jmurillo.personal_task.controller;
 
-import ch.qos.logback.core.pattern.util.RegularEscapeUtil;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jmurillo.personal_task.dtos.request.TaskRequestDTO;
 import com.jmurillo.personal_task.dtos.response.TaskResponseDTO;
-import com.jmurillo.personal_task.entity.Priority;
-import com.jmurillo.personal_task.entity.Status;
-import com.jmurillo.personal_task.entity.Task;
 import com.jmurillo.personal_task.service.impl.TaskServiceImpl;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -42,8 +32,11 @@ public class TaskController {
 
     //create new Task
     @PostMapping("/task")
-    public TaskResponseDTO createTask(@Valid @RequestBody(required = false) TaskRequestDTO task){
-        return service.createTask(task);
+    public ResponseEntity<TaskResponseDTO> createTask(@Valid @RequestBody(required = false) TaskRequestDTO task){
+        TaskResponseDTO response = service.createTask(task);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(response);
     }
 
     //updates the costumer (all or majority) tasks datas
