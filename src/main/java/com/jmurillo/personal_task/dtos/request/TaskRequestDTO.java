@@ -22,6 +22,7 @@ public record TaskRequestDTO(
         @JsonProperty("task description")
         @Schema(example = "nice to text here")
         String description,
+        String hola,
 
         @NotNull(message = "it must has to be FINISHED OR STARTED")
         @JsonProperty("task status")
