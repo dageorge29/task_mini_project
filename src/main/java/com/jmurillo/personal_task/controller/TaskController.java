@@ -3,6 +3,8 @@ package com.jmurillo.personal_task.controller;
 import com.jmurillo.personal_task.dtos.request.TaskRequestDTO;
 import com.jmurillo.personal_task.dtos.response.TaskResponseDTO;
 import com.jmurillo.personal_task.service.impl.TaskServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,12 +21,20 @@ public class TaskController {
     private final TaskServiceImpl service;
 
     //retrieve costumer task by id if exists
+    @Operation(
+            summary = "Get products by ID",
+            description = "Operations related to products"
+    )
     @GetMapping("/task/{id}")
     public TaskResponseDTO getById(@PathVariable(required = false) Long id){
         return service.readTaskByID(id);
     }
 
     //retrieve all costumers
+    @Operation(
+            summary = "Get all products",
+            description = "Operations related to products"
+    )
     @GetMapping("/task")
     public List<TaskResponseDTO> getAllCostumers(){
         return service.readAll();
