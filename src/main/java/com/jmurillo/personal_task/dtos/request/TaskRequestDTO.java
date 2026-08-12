@@ -2,10 +2,8 @@ package com.jmurillo.personal_task.dtos.request;
 
 import com.jmurillo.personal_task.entity.Priority;
 import com.jmurillo.personal_task.entity.Status;
-import jakarta.persistence.EnumeratedValue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 public record TaskRequestDTO(

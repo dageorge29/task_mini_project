@@ -39,7 +39,7 @@ public class TaskController {
                 .body(response);
     }
 
-    //updates the costumer (all or majority) tasks datas
+    //updates the costumer (all or majority) tasks data
     @PutMapping("/update/{id}")
     public ResponseEntity<TaskResponseDTO> updateCostumerTaskById(@Valid @PathVariable Long id, @RequestBody TaskRequestDTO task){
         TaskResponseDTO t = service.updateTask(id, task);

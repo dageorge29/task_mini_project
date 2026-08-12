@@ -1,7 +1,6 @@
 package com.jmurillo.personal_task.repository;
 
 
-import com.jmurillo.personal_task.dtos.response.TaskResponseDTO;
 import com.jmurillo.personal_task.entity.Priority;
 import com.jmurillo.personal_task.entity.Status;
 import com.jmurillo.personal_task.entity.Task;

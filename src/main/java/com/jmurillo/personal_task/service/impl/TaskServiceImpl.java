@@ -2,8 +2,6 @@ package com.jmurillo.personal_task.service.impl;
 
 import com.jmurillo.personal_task.dtos.request.TaskRequestDTO;
 import com.jmurillo.personal_task.dtos.response.TaskResponseDTO;
-import com.jmurillo.personal_task.entity.Priority;
-import com.jmurillo.personal_task.entity.Status;
 import com.jmurillo.personal_task.entity.Task;
 import com.jmurillo.personal_task.mapper.TaskMapper;
 import com.jmurillo.personal_task.repository.TaskRepository;
@@ -26,7 +24,6 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskResponseDTO createTask(TaskRequestDTO dto) {
         Task t = mapper.toEntity(dto);
-
         return mapper.toDTO(repository.save(t));
     }
 
