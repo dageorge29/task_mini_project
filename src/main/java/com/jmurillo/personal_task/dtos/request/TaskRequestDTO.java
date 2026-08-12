@@ -16,6 +16,7 @@ public record TaskRequestDTO(
 
         @Size(min = 5, max = 40, message =  "must have contains between 5 and 40 characters")
         String description,
+        String hola,
 
         @NotNull(message = "it must has to be FINISHED OR STARTED")
         Status status,
